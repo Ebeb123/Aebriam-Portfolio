@@ -17,7 +17,7 @@ export const githubConfig = config as GithubConfig;
 export const githubSnapshot = snapshot as GithubRepoInfo[];
 
 const API = 'https://api.github.com';
-const TTL_MS = 60 * 60 * 1000; // browsers re-check GitHub at most once an hour
+const TTL_MS = 10 * 60 * 1000; // browsers re-check GitHub at most every 10 minutes
 
 const getJson = async (url: string) => {
   const res = await fetch(url, { headers: { Accept: 'application/vnd.github+json' } });
@@ -35,18 +35,33 @@ export const sortRepos = (repos: GithubRepoInfo[], order: string[]) => {
 };
 
 export const fetchPortfolioRepos = async (cfg: GithubConfig = githubConfig): Promise<GithubRepoInfo[]> => {
-  const key = `gh-portfolio:${cfg.username.toLowerCase()}:${cfg.topic}`;
+  const key = `gh-portfolio-v2:${cfg.username.toLowerCase()}:${cfg.topic}`;
+  let stale: GithubRepoInfo[] | null = null;
   try {
     const raw = localStorage.getItem(key);
     if (raw) {
       const { at, value } = JSON.parse(raw);
       if (Date.now() - at < TTL_MS) return value;
+      stale = value; // too old, but still better than nothing if GitHub says "rate limit"
     }
   } catch {
     /* ignore */
   }
 
-  const list = (await getJson(`${API}/users/${encodeURIComponent(cfg.username)}/repos?per_page=100&sort=pushed`)) as Array<Record<string, any>>;
+  let list: Array<Record<string, any>>;
+  try {
+    // cache: 'no-store' so a newly tagged repo shows up right away
+    const res = await fetch(`${API}/users/${encodeURIComponent(cfg.username)}/repos?per_page=100&sort=pushed`, {
+      headers: { Accept: 'application/vnd.github+json' },
+      cache: 'no-store',
+    });
+    if (!res.ok) throw new Error(`GitHub ${res.status}`);
+    list = await res.json();
+  } catch (err) {
+    // GitHub allows 60 requests per hour per visitor without a token; fall back to the last good list.
+    if (stale) return stale;
+    throw err;
+  }
   const topic = cfg.topic.toLowerCase();
   const picked = list.filter((r) => (r.topics ?? []).map((t: string) => t.toLowerCase()).includes(topic));
 
