@@ -16,6 +16,43 @@ import { resolveImage } from '../../content/icons';
 const GLYPHS = ['{ }', '</>', '01', '#', '$_', '&&', '[ ]', '=>', '0x', '::', '//', '!=', '++', '()'];
 import { comingSoon } from '../../assets';
 
+/**
+ * Logo for a GitHub project card. Looks for an image inside the repo (first one that exists wins):
+ *   portfolio-logo.png → logo.png → logo.svg → assets/icon.png → assets/images/icon.png → public/logo.png
+ * If none exists, the initials ("monogram") are shown instead.
+ */
+const REPO_LOGO_PATHS = ['portfolio-logo.png', 'logo.png', 'logo.svg', 'assets/icon.png', 'assets/images/icon.png', 'public/logo.png'];
+
+const RepoLogo = ({ fullName, branch, title, monogram, isDarkMode }: {
+  fullName?: string; branch?: string; title: string;
+  monogram: { text: string; color: string }; isDarkMode: boolean;
+}) => {
+  const [i, setI] = useState(0);
+  const candidates = fullName ? REPO_LOGO_PATHS.map((p) => `https://raw.githubusercontent.com/${fullName}/${branch || 'main'}/${p}`) : [];
+  if (i < candidates.length) {
+    return (
+      <img
+        src={candidates[i]}
+        alt={`${title} logo`}
+        className="w-12 h-12 shrink-0 rounded-lg object-contain bg-white/95 p-1"
+        loading="lazy"
+        width="48"
+        height="48"
+        onError={() => setI((n) => n + 1)}
+      />
+    );
+  }
+  return (
+    <div
+      className="w-12 h-12 shrink-0 rounded-lg flex items-center justify-center font-mono font-bold text-sm"
+      style={{ background: isDarkMode ? '#0B1220' : '#1E293B', color: '#E2E8F0', borderBottom: `3px solid ${monogram.color}` }}
+      aria-hidden="true"
+    >
+      {monogram.text}
+    </div>
+  );
+};
+
 const Projects = () => {
   const { isDarkMode } = useDarkMode();
   const themeColors = useThemeColors();
@@ -255,6 +292,7 @@ const Projects = () => {
     description: string;
     icon?: string;
     monogram?: { text: string; color: string };
+    repo?: { fullName?: string; branch?: string };
     tags: Tag[];
     preview: { kind: 'modal'; slug: string } | { kind: 'link'; url: string } | null;
     details: { kind: 'internal'; to: string } | { kind: 'external'; url: string };
@@ -290,6 +328,7 @@ const Projects = () => {
       title: r.name,
       description: r.description || 'No description yet — add one in the repo’s About section on GitHub.',
       monogram: { text: initials, color: top ? languageColor(top) : '#475569' },
+      repo: { fullName: r.fullName || (r.htmlUrl || '').replace(/^https:\/\/github\.com\//, ''), branch: r.defaultBranch },
       tags: [
         ...r.languages.slice(0, 4).map((l) => ({ label: `${l.name} ${l.pct}%`, color: languageColor(l.name) })),
         ...(gh.showTopics ? r.topics.slice(0, 4).map((t) => ({ label: `#${t}` })) : []),
@@ -492,13 +531,14 @@ const Projects = () => {
                         height="48"
                       />
                     ) : project.monogram ? (
-                      <div
-                        className="w-12 h-12 shrink-0 rounded-lg flex items-center justify-center font-mono font-bold text-sm"
-                        style={{ background: isDarkMode ? '#0B1220' : '#1E293B', color: '#E2E8F0', borderBottom: `3px solid ${project.monogram.color}` }}
-                        aria-hidden="true"
-                      >
-                        {project.monogram.text}
-                      </div>
+                      <RepoLogo
+                        key={project.key}
+                        fullName={project.repo?.fullName}
+                        branch={project.repo?.branch}
+                        title={project.title}
+                        monogram={project.monogram}
+                        isDarkMode={isDarkMode}
+                      />
                     ) : null}
                     <div className="flex-1 min-w-0">
                       <CardTitle className="text-xl dark:text-gray-100 transition-colors group-hover:!text-pink-500 dark:group-hover:!text-pink-400 flex items-center gap-2">

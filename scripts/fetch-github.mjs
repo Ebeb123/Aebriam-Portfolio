@@ -43,6 +43,8 @@ try {
       stars: r.stargazers_count || 0,
       pushedAt: r.pushed_at || '',
       languages,
+      fullName: r.full_name || '',
+      defaultBranch: r.default_branch || 'main',
     });
   }
   fs.writeFileSync(outPath, JSON.stringify(repos, null, 2) + '\n');

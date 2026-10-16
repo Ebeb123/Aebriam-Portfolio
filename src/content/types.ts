@@ -50,6 +50,8 @@ export type GithubRepoInfo = {
   stars: number;
   pushedAt: string;
   languages: { name: string; pct: number }[];
+  fullName?: string;       // "owner/repo" — used to find the repo's logo
+  defaultBranch?: string;  // e.g. "main"
 };
 
 export type SiteContent = {

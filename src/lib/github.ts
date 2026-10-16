@@ -35,7 +35,7 @@ export const sortRepos = (repos: GithubRepoInfo[], order: string[]) => {
 };
 
 export const fetchPortfolioRepos = async (cfg: GithubConfig = githubConfig): Promise<GithubRepoInfo[]> => {
-  const key = `gh-portfolio-v2:${cfg.username.toLowerCase()}:${cfg.topic}`;
+  const key = `gh-portfolio-v3:${cfg.username.toLowerCase()}:${cfg.topic}`;
   let stale: GithubRepoInfo[] | null = null;
   try {
     const raw = localStorage.getItem(key);
@@ -86,6 +86,8 @@ export const fetchPortfolioRepos = async (cfg: GithubConfig = githubConfig): Pro
         stars: r.stargazers_count ?? 0,
         pushedAt: r.pushed_at ?? '',
         languages,
+        fullName: r.full_name ?? '',
+        defaultBranch: r.default_branch ?? 'main',
       } as GithubRepoInfo;
     }),
   );
