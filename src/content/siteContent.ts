@@ -29,7 +29,7 @@ export const siteContent: SiteContent = {
     ],
     status: 'ACCESS GRANTED',
     terminalTitle: 'aebriam@portfolio: ~/about',
-    cmdAbout: 'Me about.txt',
+    cmdAbout: 'cat about.txt',
     paragraphs: [
       'Fourth-year BS Information Technology student at the University of Cebu Lapu-Lapu and Mandaue, growing my focus on cybersecurity.',
       'I code in C#/.NET, Java, C, and Python, design databases in SQL Server, and enjoy finding vulnerabilities and applying security best practices.',
