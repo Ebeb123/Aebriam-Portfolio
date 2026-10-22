@@ -32,7 +32,14 @@ export type ExperienceData = {
   description: string[];
 };
 
-export type SkillData = { name: string; icon: string };
+export type EducationData = {
+  school: string;
+  program: string;
+  period: string;
+  location?: string;
+};
+
+export type SkillData = { name: string; icon: string; group?: string };
 
 export type CertificationData = {
   title: string;
@@ -76,6 +83,7 @@ export type SiteContent = {
   };
   projects: ProjectData[];
   experience: ExperienceData[];
+  education?: EducationData[];
   skills: SkillData[];
   certifications: CertificationData[];
   contact: {
@@ -84,5 +92,6 @@ export type SiteContent = {
     phone: string;
     github: string;
     linkedin: string;
+    facebook?: string;
   };
 };

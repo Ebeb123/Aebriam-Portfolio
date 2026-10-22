@@ -1,7 +1,23 @@
 {
   "username": "ebeb123",
   "topic": "portfolio",
-  "position": "after",
+  "position": "before",
   "showTopics": true,
-  "order": []
+  "order": [
+    "Budgee",
+    "ShuttleFlow",
+    "DART---Disciplinary-Action-Resolution-Tracker-DEMO-"
+  ],
+  "overrides": {
+    "DART---Disciplinary-Action-Resolution-Tracker-DEMO-": {
+      "title": "Records Desk",
+      "description": "Records system for a school office. Logs entries, counts repeats, flags follow-ups, and exports PDF reports. Demo data only.",
+      "hideTopics": true
+    },
+    "MASTER-TRACKER-FOR-STUDENTS-WITH-SPECIAL-CASES-DEMO-": {
+      "title": "Case Board",
+      "description": "Case dashboard for a school office. Status tracking, document checklist, and review dates. React on Google Apps Script and Sheets. Demo data only.",
+      "hideTopics": true
+    }
+  }
 }

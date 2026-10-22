@@ -4,12 +4,16 @@ import type { GithubRepoInfo } from '../content/types';
 import config from '../content/github.config.json';
 import snapshot from '../content/github-snapshot.json';
 
+export type RepoOverride = { title?: string; description?: string; hideTopics?: boolean };
+
 export type GithubConfig = {
   username: string;
   topic: string;
   position: 'before' | 'after';
   showTopics: boolean;
   order: string[];
+  /** Show a different name / description on the site than on GitHub (key = repo name). */
+  overrides?: Record<string, RepoOverride>;
 };
 
 export const githubConfig = config as GithubConfig;
