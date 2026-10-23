@@ -2,13 +2,13 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useContent } from '../../contexts/ContentContext';
 
-/**
+/**aebriam only
  * Guided tour: a fake cursor with a chat bubble glides to the important parts
  * of the page and "types" a short message at each stop.
  * Runs once on the first visit; afterwards a "take the tour again" pill replays it.
  */
 type Anchor = 'tl' | 'center' | 'left';
-type Step = { target: string; text: string; anchor?: Anchor; click?: boolean };
+type Step = { target: string; text: string; anchor?: Anchor; click?: boolean; hops?: string[]; hopsMs?: number };
 
 const SEEN_KEY = 'tour-seen-v2';
 const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
@@ -45,17 +45,16 @@ const Tour = () => {
   const first = content.profile.shortName;
 
   const steps: Step[] = [
-    { target: '#about .hero-name', text: `Hi, I'm ${first}.`, anchor: 'tl' },
-    { target: '[data-tour="socials"]', text: 'My links.', anchor: 'tl' },
-    { target: '[data-tour="resume"]', text: 'Resume, PDF.', anchor: 'center' },
-    { target: '[data-tour="github"]', text: 'GitHub.', anchor: 'center' },
-    { target: '[data-tour="facebook"]', text: 'Facebook.', anchor: 'center' },
-    { target: '[data-tour="email"]', text: 'Email.', anchor: 'center' },
-    { target: '#about .facts', text: 'Quick facts.', anchor: 'tl' },
-    { target: '#projects .fan-item.is-active .pcard', text: 'Projects. Each has a live demo.', anchor: 'tl' },
-    { target: '#projects .fan-arrow[aria-label="Next project"]', text: 'Next project.', anchor: 'center', click: true },
+    { target: '#about .hero-name', text: `Hi, I'm ${first}. I like to build new things!!`, anchor: 'tl' },
+    // one bubble, then the cursor taps each link; the whole socials part takes 1.5 s
+    {
+      target: '[data-tour="resume"]', text: 'My Socials', anchor: 'center', hopsMs: 1500,
+      hops: ['[data-tour="github"]', '[data-tour="facebook"]', '[data-tour="email"]'],
+    },
+    { target: '#about .facts', text: 'Here are some quick facts about me', anchor: 'tl' },
+    { target: '#projects .fan-item.is-active .pcard', text: 'Here are some of my projects. Each has a live DEMO.', anchor: 'tl' },
     { target: '#experience .tl-item', text: 'Work experience.', anchor: 'tl' },
-    { target: '#contact .card', text: 'Contact.', anchor: 'tl' },
+    { target: '#contact .card', text: 'Here is my Contacts.', anchor: 'tl' },
   ];
 
   const pointerRef = useRef<HTMLDivElement>(null);
@@ -128,8 +127,10 @@ const Tour = () => {
 
       currentRef.current = { el, anchor: s.anchor };
       const { x, y } = pointFor(el, s.anchor);
+      const hopMs = s.hops && s.hops.length ? Math.round((s.hopsMs ?? 1500) / (s.hops.length + 1)) : 0;
+      if (hopMs && pointerRef.current) pointerRef.current.style.transitionDuration = `${hopMs - 40}ms`;
       place(x, y);
-      await wait(1000); // let the cursor arrive
+      await wait(hopMs || 1000); // let the cursor arrive
       if (cancelled.current) return;
 
       if (s.click) {
@@ -137,6 +138,23 @@ const Tour = () => {
         el.click();
         await wait(250);
         setClicking(false);
+      }
+      if (s.hops && s.hops.length) {
+        // quick pass over a row of links: bubble stays, cursor hops (total = hopsMs)
+        const pointer = pointerRef.current;
+        const per = hopMs;
+        setTyped(s.text);
+        for (const sel of s.hops) {
+          if (cancelled.current) break;
+          const h = document.querySelector<HTMLElement>(sel);
+          if (!h) continue;
+          currentRef.current = { el: h, anchor: s.anchor };
+          const pt = pointFor(h, s.anchor);
+          place(pt.x, pt.y);
+          await wait(per);
+        }
+        if (pointer) pointer.style.transitionDuration = '';
+        continue;
       }
       await typeOut(s.text);
       await wait(1700);
