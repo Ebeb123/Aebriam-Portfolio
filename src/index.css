@@ -190,6 +190,18 @@ body {
 /* list rows (certifications, toolkit) */
 .list-row { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; padding: 0.75rem 0; border-bottom: 1px solid rgb(var(--g200)); font-size: 15.5px; }
 .list-row .k { font-family: var(--font-mono); color: rgb(var(--g400)); font-size: 12px; flex-shrink: 0; }
+
+/* certification badges: photo + title, the whole tile opens the Credly page */
+.badges { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 1.5rem 1rem; }
+@media (max-width: 760px) { .badges { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 420px) { .badges { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.badge { display: flex; flex-direction: column; align-items: center; gap: 0.6rem; text-align: center; color: rgb(var(--ink)); text-decoration: none; }
+.badge img { width: 100%; max-width: 132px; height: auto; aspect-ratio: 1; object-fit: contain; transition: transform .25s var(--ease), filter .25s var(--ease); }
+.badge-title { font-size: 13px; line-height: 1.35; color: rgb(var(--g600)); }
+a.badge:hover img { transform: translateY(-3px); filter: drop-shadow(0 8px 14px rgb(0 0 0 / 0.14)); }
+a.badge:hover .badge-title { color: rgb(var(--ink)); }
+a.badge:focus-visible { outline: 2px solid rgb(var(--accent)); outline-offset: 4px; border-radius: var(--r); }
+@media (prefers-reduced-motion: reduce) { a.badge:hover img { transform: none; } }
 .stack-row { display: grid; gap: 0.2rem; padding: 0.8rem 0; border-bottom: 1px solid rgb(var(--g200)); }
 @media (min-width: 640px) { .stack-row { grid-template-columns: 9.5rem 1fr; gap: 1.5rem; } }
 .stack-row .k { font-family: var(--font-mono); font-size: 12px; color: rgb(var(--g400)); padding-top: 0.2rem; }

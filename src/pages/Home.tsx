@@ -3,10 +3,12 @@ import { Link, useLocation } from 'react-router-dom';
 import { useContent } from '../contexts/ContentContext';
 import Section, { fadeUp } from '../components/minimal/Section';
 import ProjectCarousel from '../components/minimal/ProjectCarousel';
+import { useCredlyBadges } from '../components/minimal/useCredlyBadges';
 
 const Home = () => {
   const { content } = useContent();
-  const { profile, about, experience, skills, certifications, contact } = content;
+  const { profile, about, experience, skills, contact } = content;
+  const certifications = useCredlyBadges(content.certifications); // live from Credly
   const education = content.education ?? [];
   const location = useLocation();
   const [copied, setCopied] = useState(false);
@@ -41,7 +43,13 @@ const Home = () => {
     else groups.push({ name: g, items: [s.name] });
   }
 
-  const issuers = new Set(certifications.map((c) => c.subtitle)).size;
+  const issuerNames = [...new Set(certifications.map((c) => c.subtitle).filter(Boolean))];
+  const issuers = issuerNames.length;
+  // "{certCount}" / "{certIssuers}" in a highlight stay in sync with Credly
+  const fillCerts = (text: string) =>
+    text
+      .replace('{certCount}', String(certifications.length))
+      .replace('{certIssuers}', issuerNames.length > 1 ? `${issuerNames.slice(0, -1).join(', ')} & ${issuerNames[issuerNames.length - 1]}` : issuerNames[0] ?? '');
 
   return (
     <div className="page">
@@ -120,7 +128,7 @@ const Home = () => {
               {about.highlights.map((h, i) => (
                 <li key={h}>
                   <span>{String(i + 1).padStart(2, '0')}</span>
-                  <span>{h.charAt(0).toUpperCase() + h.slice(1)}</span>
+                  <span>{fillCerts(h.charAt(0).toUpperCase() + h.slice(1))}</span>
                 </li>
               ))}
             </ul>
@@ -184,17 +192,20 @@ const Home = () => {
       {/* ---------- certifications ---------- */}
       {certifications.length > 0 && (
         <Section id="certifications" title="Certifications" count={certifications.length}>
-          <div className="list">
-            {certifications.map((c) => (
-              <div key={c.title} className="list-row">
-                {c.credentialUrl ? (
-                  <a href={c.credentialUrl} target="_blank" rel="noreferrer" className="link">{c.title} ↗</a>
-                ) : (
-                  <span>{c.title}</span>
-                )}
-                <span className="k">{c.subtitle}</span>
-              </div>
-            ))}
+          <div className="badges">
+            {certifications.map((c) =>
+              c.credentialUrl ? (
+                <a key={c.credentialUrl} href={c.credentialUrl} target="_blank" rel="noreferrer" className="badge" title={`${c.title} · ${c.subtitle}`}>
+                  <img src={c.image} alt={`${c.title} badge, ${c.subtitle}`} loading="lazy" width={340} height={340} />
+                  <span className="badge-title">{c.title}</span>
+                </a>
+              ) : (
+                <div key={c.title} className="badge">
+                  <img src={c.image} alt={`${c.title} badge, ${c.subtitle}`} loading="lazy" width={340} height={340} />
+                  <span className="badge-title">{c.title}</span>
+                </div>
+              ),
+            )}
           </div>
           <p className="micro mt-3">
             {certifications.length} credentials from {issuers} issuer{issuers === 1 ? '' : 's'}.

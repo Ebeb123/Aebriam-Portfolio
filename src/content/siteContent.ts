@@ -38,7 +38,7 @@ export const siteContent: SiteContent = {
     highlights: [
       'robotics working scholar 2024 – 2026 · managing 87 robotics kits',
       'shipped 2 Android apps in 2026: Budgee & ShuttleFlow',
-      '5 certifications from IBM SkillsBuild & Cisco',
+      '{certCount} certifications from {certIssuers}', // filled in live from Credly
       'capstone: IntervAI — AI mock interview system',
     ],
   },
@@ -110,11 +110,11 @@ export const siteContent: SiteContent = {
     { name: 'Microsoft Office', icon: 'builtin:msoffice', group: 'Tools & hardware' },
   ],
   certifications: [
-    { title: 'Cybersecurity Fundamentals', subtitle: 'IBM SkillsBuild', image: 'builtin:badge-cyber-fundamentals', credentialUrl: '' },
-    { title: 'Getting Started with Cybersecurity', subtitle: 'IBM SkillsBuild', image: 'builtin:badge-getting-started', credentialUrl: '' },
-    { title: 'Governance, Risk, Compliance, and Data Privacy', subtitle: 'IBM SkillsBuild', image: 'builtin:badge-grc', credentialUrl: '' },
-    { title: 'Data Fundamentals', subtitle: 'IBM SkillsBuild', image: 'builtin:badge-data-fundamentals', credentialUrl: '' },
-    { title: 'Introduction to Cybersecurity', subtitle: 'Cisco', image: 'builtin:badge-cisco-intro', credentialUrl: '' },
+    { title: 'Cybersecurity Fundamentals', subtitle: 'IBM SkillsBuild', image: '/badges/ibm-cybersecurity-fundamentals.png', credentialUrl: 'https://www.credly.com/badges/846e08d6-bcb8-4eda-8693-1df6817c1c06/public_url' },
+    { title: 'Getting Started with Cybersecurity', subtitle: 'IBM SkillsBuild', image: '/badges/ibm-getting-started-cybersecurity.png', credentialUrl: 'https://www.credly.com/badges/f2716644-e0b1-480c-b310-dc9b570eda7e/public_url' },
+    { title: 'Governance, Risk, Compliance, and Data Privacy', subtitle: 'IBM SkillsBuild', image: '/badges/ibm-grc-data-privacy.png', credentialUrl: 'https://www.credly.com/badges/bd11f7d6-0b9b-4b69-ad51-37b5e5b3140d/public_url' },
+    { title: 'Data Fundamentals', subtitle: 'IBM SkillsBuild', image: '/badges/ibm-data-fundamentals.png', credentialUrl: 'https://www.credly.com/badges/919f3d47-6a72-4563-b462-76a3b394fb7c/public_url' },
+    { title: 'Introduction to Cybersecurity', subtitle: 'Cisco', image: '/badges/cisco-intro-cybersecurity.png', credentialUrl: 'https://www.credly.com/badges/f07493e2-a248-47eb-a652-df8ff9800183/public_url' },
   ],
   contact: {
     tagline: 'Open to internships, OJT, and entry-level IT opportunities — feel free to reach out.',
