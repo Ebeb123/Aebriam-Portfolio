@@ -1,10 +1,21 @@
 // Loads your portfolio repos straight from GitHub (public API, no token).
 // A repo is shown when it has the topic set in src/content/github.config.json (default: "portfolio").
-import type { GithubRepoInfo } from '../content/types';
+import type { CaseStudy, GithubRepoInfo } from '../content/types';
 import config from '../content/github.config.json';
 import snapshot from '../content/github-snapshot.json';
 
-export type RepoOverride = { title?: string; description?: string; hideTopics?: boolean };
+export type RepoOverride = {
+  title?: string;
+  description?: string;
+  hideTopics?: boolean;
+  /** e.g. "Mobile app" (shows the "Try it" phone frame) */
+  kind?: string;
+  /** Screenshot for the card, e.g. "/projects/budgee.jpg" (file goes in public/projects) */
+  image?: string;
+  /** URL name of the case-study page: /projects/<slug> */
+  slug?: string;
+  caseStudy?: CaseStudy;
+};
 
 export type GithubConfig = {
   username: string;

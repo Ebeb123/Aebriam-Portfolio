@@ -216,9 +216,15 @@ a.badge:focus-visible { outline: 2px solid rgb(var(--accent)); outline-offset: 4
 .pcard-top { display: flex; align-items: center; gap: 0.85rem; }
 .pcard-kind { font-family: var(--font-mono); font-size: 11.5px; color: rgb(var(--g400)); }
 .pcard-title { font-size: 1.2rem; font-weight: 600; line-height: 1.2; letter-spacing: -0.01em; }
-.pcard-sum { margin-top: 0.9rem; font-size: 14.5px; line-height: 1.6; color: rgb(var(--g500)); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.pcard-sum { margin-top: 0.75rem; font-size: 14.5px; line-height: 1.6; color: rgb(var(--g500)); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 .pcard-tags { margin-top: 0.6rem; font-family: var(--font-mono); font-size: 11.5px; color: rgb(var(--g400)); }
 .pcard-actions { display: flex; align-items: center; gap: 1rem; margin-top: auto; padding-top: 1rem; }
+.pcard { overflow: hidden; }
+.pcard-shot { margin: -1.25rem -1.35rem 1rem; aspect-ratio: 16 / 9; overflow: hidden; background: rgb(var(--g100)); border-bottom: 1px solid rgb(var(--g200)); }
+.pcard-shot img { width: 100%; height: 100%; object-fit: cover; object-position: top center; display: block; transition: transform .6s var(--ease); }
+.fan-item.is-active .pcard:hover .pcard-shot img, .grid-card .pcard:hover .pcard-shot img { transform: scale(1.03); }
+@media (prefers-reduced-motion: reduce) { .pcard-shot img { transition: none; } .pcard:hover .pcard-shot img { transform: none !important; } }
+.pcard.has-shot .pcard-sum { -webkit-line-clamp: 3; }
 .app-icon { flex-shrink: 0; border-radius: 10px; overflow: hidden; display: flex; align-items: center; justify-content: center; background: rgb(var(--ink)); color: rgb(var(--bg)); font-family: var(--font-mono); font-size: 15px; font-weight: 500; box-shadow: 0 0 0 1px rgb(var(--ink) / 0.06); }
 .app-icon img { width: 100%; height: 100%; object-fit: cover; background: #fff; }
 .monogram { width: 44px; height: 44px; border-radius: 10px; overflow: hidden; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: rgb(var(--ink)); color: rgb(var(--bg)); font-family: var(--font-mono); }
@@ -227,8 +233,8 @@ a.badge:focus-visible { outline: 2px solid rgb(var(--accent)); outline-offset: 4
 /* fanned stack */
 .fan { position: relative; outline: none; touch-action: pan-y; user-select: none; }
 @media (max-width: 1023px) { .fan { overflow-x: clip; margin: 0 -1.25rem; padding: 0 1.25rem; } }
-.fan-stage { position: relative; height: 20.5rem; }
-.fan-item { position: absolute; top: 0.25rem; left: 50%; width: min(23rem, 84vw); height: 18.5rem; transform-origin: 50% 120%; transition: transform 0.65s var(--ease), opacity 0.45s ease; cursor: pointer; }
+.fan-stage { position: relative; height: 29rem; }
+.fan-item { position: absolute; top: 0.25rem; left: 50%; width: min(23rem, 84vw); height: 27rem; transform-origin: 50% 120%; transition: transform 0.65s var(--ease), opacity 0.45s ease; cursor: pointer; }
 .fan-item.is-active { cursor: default; }
 .fan-item > div { height: 100%; }
 .fan-item:not(.is-active) .pcard { box-shadow: none; }
@@ -237,7 +243,7 @@ a.badge:focus-visible { outline: 2px solid rgb(var(--accent)); outline-offset: 4
 .fan-arrow:hover { color: rgb(var(--ink)); }
 .fan-count { font-family: var(--font-mono); font-size: 12px; color: rgb(var(--g400)); }
 .fan-count b { color: rgb(var(--ink)); font-weight: 500; }
-.grid-card { height: 18.5rem; }
+.grid-card { height: 27rem; }
 
 /* ---------- contact ---------- */
 .contact-line { font-size: clamp(1.5rem, 4vw, 2rem); font-weight: 600; line-height: 1.2; letter-spacing: -0.02em; }
@@ -310,3 +316,19 @@ a.badge:focus-visible { outline: 2px solid rgb(var(--accent)); outline-offset: 4
 .phone-notch { position: absolute; top: 24px; left: 50%; translate: -50% 0; width: 110px; height: 30px; border-radius: 20px; background: #0b0b0c; z-index: 2; }
 .phone-screen { width: 100%; height: 100%; border: 0; border-radius: 44px; background: #fff; }
 body:has(.modal-backdrop) .tour-pill { display: none; }
+
+/* ---------- case study pages ---------- */
+.cs-shot { margin: 2.5rem 0 0; border: 1px solid rgb(var(--g200)); border-radius: 10px; overflow: hidden; background: rgb(var(--g100)); box-shadow: var(--shadow-lift); }
+.cs-shot img { display: block; width: 100%; height: auto; }
+.glance { margin-top: -0.5rem; }
+.glance-row { display: grid; gap: 0.35rem; padding: 1rem 0; border-bottom: 1px solid rgb(var(--g200)); font-size: 15px; line-height: 1.7; }
+@media (min-width: 640px) { .glance-row { grid-template-columns: 8rem 1fr; gap: 1.5rem; } }
+.glance-row .k { font-family: var(--font-mono); font-size: 12px; color: rgb(var(--g400)); padding-top: 0.3rem; }
+.glance-row ul { display: grid; gap: 0.35rem; }
+.glance-row li { position: relative; padding-left: 1.1rem; }
+.glance-row li::before { content: ''; position: absolute; left: 0; top: 0.75em; width: 0.45rem; height: 1px; background: rgb(var(--g400)); }
+
+/* GitHub activity line under the projects */
+.gh-activity { margin-top: 1.25rem; font-family: var(--font-mono); font-size: 12px; color: rgb(var(--g400)); display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+.gh-activity a { color: inherit; text-decoration: underline; text-underline-offset: 3px; text-decoration-color: rgb(var(--g300)); }
+.gh-activity a:hover { color: rgb(var(--ink)); }

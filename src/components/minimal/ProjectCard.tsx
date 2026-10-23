@@ -20,10 +20,24 @@ export const ProjectLogo = ({ src, candidates, title, size = 52 }: { src?: strin
   );
 };
 
-const ProjectCard = ({ p, onPreview, onPhone }: { p: ProjectCardData; onPreview?: (slug: string) => void; onPhone?: (p: ProjectCardData) => void }) => (
-  <article className="pcard">
+/** Card screenshot: the set image, or the first candidate that loads. Hidden if none load. */
+const useShot = (p: ProjectCardData) => {
+  const list = p.image ? [p.image] : p.imageCandidates ?? [];
+  const [i, setI] = useState(0);
+  return { src: i < list.length ? list[i] : undefined, next: () => setI((n) => n + 1) };
+};
+
+const ProjectCard = ({ p, onPreview, onPhone }: { p: ProjectCardData; onPreview?: (slug: string) => void; onPhone?: (p: ProjectCardData) => void }) => {
+  const shot = useShot(p);
+  return (
+  <article className={`pcard${shot.src ? ' has-shot' : ''}`}>
+    {shot.src && (
+      <div className="pcard-shot">
+        <img src={shot.src} alt={`${p.title} screenshot`} loading="lazy" draggable={false} onError={shot.next} />
+      </div>
+    )}
     <div className="pcard-top">
-      <ProjectLogo src={p.logo} candidates={p.logoCandidates} title={p.title} />
+      {!shot.src && <ProjectLogo src={p.logo} candidates={p.logoCandidates} title={p.title} />}
       <div className="min-w-0">
         <div className="pcard-kind">
           {p.kind}
@@ -34,14 +48,11 @@ const ProjectCard = ({ p, onPreview, onPhone }: { p: ProjectCardData; onPreview?
     </div>
 
     <p className="pcard-sum">{p.summary}</p>
-    {p.tags.length > 0 && <div className="pcard-tags">{p.tags.join('  ·  ')}</div>}
+    {!shot.src && p.tags.length > 0 && <div className="pcard-tags">{p.tags.join('  ·  ')}</div>}
 
     <div className="pcard-actions">
       {p.liveUrl && p.kind === 'Mobile app' && onPhone ? (
-        <>
-          <button type="button" className="btn" onClick={() => onPhone(p)}>Try it</button>
-          <a href={p.liveUrl} target="_blank" rel="noreferrer" className="arrow-link">New tab <span className="arr">↗</span></a>
-        </>
+        <button type="button" className="btn" onClick={() => onPhone(p)}>Try it</button>
       ) : p.liveUrl ? (
         <a href={p.liveUrl} target="_blank" rel="noreferrer" className="btn">Open demo ↗</a>
       ) : null}
@@ -55,6 +66,7 @@ const ProjectCard = ({ p, onPreview, onPhone }: { p: ProjectCardData; onPreview?
       )}
     </div>
   </article>
-);
+  );
+};
 
 export default ProjectCard;

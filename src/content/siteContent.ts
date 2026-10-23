@@ -17,7 +17,10 @@ export const siteContent: SiteContent = {
     handle: 'aebriam.lawas',
     roles: ['BS Information Technology Student', 'Robotics Working Scholar', 'Mobile App Developer', 'Web Developer', 'Cybersecurity Enthusiast'],
     photo: profile1,
-    resumeUrl: '/resume.pdf',
+    resumeUrl: '/previews/resume.pdf',
+    // Line under your name on the link preview (Messenger / Facebook / LinkedIn) and in Google.
+    // {role} = the first item in "roles" above, so changing that role updates the preview too.
+    previewTagline: '{role}. Mobile & web developer, growing in cybersecurity.',
   },
   about: {
     org: 'UCLM · Information Technology',
@@ -67,6 +70,17 @@ export const siteContent: SiteContent = {
         'Feedback and scoring engine with an Answer Improvement Assistant for iterative practice.',
       ],
       preview: { liveUrl: '', video: '', images: [] },
+      image: '/projects/intervai.jpg',
+      caseStudy: {
+        problem: 'Job applicants rarely get honest feedback on how they come across in an interview, only on what they say.',
+        role: 'Project manager of a four-member capstone team. Planned the work and deadlines, coordinated the system and the manuscript, and led the team through panel revisions.',
+        stack: ['Python', 'Speech emotion models', 'Facial expression models', 'Cerebras LLM API'],
+        result: [
+          'Scores each answer on voice, facial expression and content.',
+          'Gives concrete suggestions so users can practise and try again.',
+          'Models trained on six public datasets: RAVDESS, CREMA-D, TESS, SAVEE, FER-2013 and RAF-DB.',
+        ],
+      },
     },
   ],
   experience: [
@@ -78,6 +92,27 @@ export const siteContent: SiteContent = {
       description: [
         'Assist in facilitating robotics instruction and hands-on laboratory activities for senior high school students.',
         'Manage the setup, testing, and troubleshooting of 87 robotics kits (29 Arduino, 29 Raspberry Pi, and 29 LEGO EV3) for student projects.',
+      ],
+    },
+    {
+      title: 'Project Manager — IntervAI',
+      company: 'Team project · UCLM capstone',
+      location: 'Mandaue City, Cebu',
+      period: 'Ongoing',
+      description: [
+        'Lead a four-member team building an AI mock-interview system that scores voice, facial expression and answer content.',
+        'Plan tasks and deadlines, coordinate the system and manuscript work, and handle panel revisions.',
+      ],
+    },
+    {
+      title: 'Web Developer',
+      company: 'Freelance / commissioned work',
+      location: 'Cebu',
+      period: 'Project-based',
+      description: [
+        'Built web systems for offices on Google Apps Script and Google Sheets: a records desk with PDF reports, a case-tracking board and a device reservation system.',
+        'Delivered dashboards, staff sign-in, email reminders and exports with no server or hosting costs.',
+        'Public demos use fictional data; real records stay private.',
       ],
     },
   ],
@@ -117,9 +152,9 @@ export const siteContent: SiteContent = {
     { title: 'Introduction to Cybersecurity', subtitle: 'Cisco', image: '/badges/cisco-intro-cybersecurity.png', credentialUrl: 'https://www.credly.com/badges/f07493e2-a248-47eb-a652-df8ff9800183/public_url' },
   ],
   contact: {
-    tagline: 'Open to internships, OJT, and entry-level IT opportunities — feel free to reach out.',
-    email: 'Aebriamlawas@gmail.com',
-    phone: '+63 999 989 8892',
+    tagline: "Open to internships and OJT. Let's talk.",
+    email: 'aebriamlawas@gmail.com',
+    phone: '', // left empty on purpose: public pages get scraped for spam calls
     github: 'https://github.com/ebeb123',
     linkedin: '',
     facebook: 'https://www.facebook.com/ebeb1245/',

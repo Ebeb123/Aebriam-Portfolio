@@ -152,7 +152,7 @@ const LocalClock = () => {
   return (
     <div className="clock">
       <span className="live-dot" aria-hidden="true" />
-      <span>Cebu, PH · {time}</span>
+      <span>Local time · {time}</span>
     </div>
   );
 };

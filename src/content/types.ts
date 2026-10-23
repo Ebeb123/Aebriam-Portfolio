@@ -11,6 +11,14 @@ export type ProjectPreviewData = {
   images: string[];
 };
 
+/** Short case study shown on the project's page ("At a glance"). */
+export type CaseStudy = {
+  problem: string;
+  role: string;
+  stack: string[];
+  result: string[];
+};
+
 export type ProjectData = {
   slug: string;
   title: string;
@@ -22,6 +30,9 @@ export type ProjectData = {
   features: ProjectFeature[];
   highlights: string[];
   preview: ProjectPreviewData;
+  /** Screenshot / cover shown on the project card, e.g. '/projects/intervai.jpg'. */
+  image?: string;
+  caseStudy?: CaseStudy;
 };
 
 export type ExperienceData = {
@@ -70,6 +81,7 @@ export type SiteContent = {
     roles: string[];     // typewriter roles
     photo: string;
     resumeUrl: string;
+    previewTagline?: string;
   };
   about: {
     org: string;

@@ -6,18 +6,124 @@
   "order": [
     "Budgee",
     "ShuttleFlow",
-    "DART---Disciplinary-Action-Resolution-Tracker-DEMO-"
+    "Devices-Booking-System-DEMO",
+    "Disciplinary-Action-Resolution-Tracker-DART-DEMO",
+    "MASTER-TRACKER-FOR-STUDENTS-WITH-SPECIAL-CASES-DEMO-"
   ],
   "overrides": {
+    "Budgee": {
+      "kind": "Mobile app",
+      "slug": "budgee",
+      "image": "/projects/budgee.jpg",
+      "caseStudy": {
+        "problem": "Students living on an allowance lose track of where it goes. Most expense apps need an account and internet, and none tell you how much is still left for needs, wants and savings.",
+        "role": "Solo developer. Planned the features, designed the screens, built the local database and tested it on Android.",
+        "stack": [
+          "React Native",
+          "Expo Router",
+          "SQLite",
+          "sql.js (web demo)",
+          "JavaScript"
+        ],
+        "result": [
+          "Works fully offline: no account, no server, no internet permission.",
+          "Splits every peso into Needs, Wants and Savings (50/30/20) automatically.",
+          "Also runs in the browser, so anyone can try it without installing."
+        ]
+      }
+    },
+    "ShuttleFlow": {
+      "kind": "Mobile app",
+      "slug": "shuttleflow",
+      "image": "/projects/shuttleflow.jpg",
+      "caseStudy": {
+        "problem": "Open-play badminton sessions are run from paper lists or group chats, so some players wait much longer than others and games end up lopsided.",
+        "role": "Solo developer. Designed the queue and matching rules, built the app and tested it during real sessions.",
+        "stack": [
+          "React Native",
+          "Expo",
+          "TypeScript",
+          "SQLite",
+          "sql.js (web demo)"
+        ],
+        "result": [
+          "Auto-matches doubles games by skill level and waiting time, so court time stays fair.",
+          "Live courts, the waiting queue and win/loss stats on one screen.",
+          "Runs offline on a single phone held by the organizer."
+        ]
+      }
+    },
+    "Devices-Booking-System-DEMO": {
+      "slug": "device-reservation",
+      "title": "Device Reservation",
+      "description": "Booking system for lab equipment. Live availability, staff approvals, return tracking and email reminders. Demo data only.",
+      "hideTopics": true,
+      "image": "/projects/device-reservation.jpg",
+      "caseStudy": {
+        "problem": "Equipment was booked informally, which led to double bookings and devices that were never returned on time.",
+        "role": "Sole developer. Gathered the requirements, built and deployed the system, and maintain it.",
+        "stack": [
+          "Google Apps Script",
+          "Google Sheets",
+          "HTML, CSS, JavaScript",
+          "MailApp",
+          "Time-driven triggers"
+        ],
+        "result": [
+          "Live availability per time slot prevents double bookings.",
+          "Admin dashboard loads in 1 server call instead of 5; approvals take 1 call instead of 3.",
+          "Automatic confirmation emails and overdue-return reminders, at zero hosting cost."
+        ]
+      }
+    },
+    "Disciplinary-Action-Resolution-Tracker-DART-DEMO": {
+      "slug": "records-desk",
+      "title": "Records Desk",
+      "description": "Records system for an office. Logs entries, counts repeats, flags follow-ups and exports PDF reports. Demo data only.",
+      "hideTopics": true,
+      "image": "/projects/records-desk.jpg",
+      "caseStudy": {
+        "problem": "Records kept in plain spreadsheets made counting repeat entries, tracking follow-ups and preparing reports slow and manual.",
+        "role": "Sole developer, commissioned work. Gathered requirements with the staff, built and deployed it, and handled updates.",
+        "stack": [
+          "React",
+          "Tailwind CSS",
+          "Google Apps Script",
+          "Google Sheets"
+        ],
+        "result": [
+          "Entries, repeat counts and follow-ups update in one dashboard.",
+          "PDF reports in one click instead of compiling them by hand.",
+          "Runs entirely on Google Workspace, so there is no hosting cost."
+        ]
+      }
+    },
     "DART---Disciplinary-Action-Resolution-Tracker-DEMO-": {
       "title": "Records Desk",
-      "description": "Records system for a school office. Logs entries, counts repeats, flags follow-ups, and exports PDF reports. Demo data only.",
+      "description": "Records system for an office. Logs entries, counts repeats, flags follow-ups and exports PDF reports. Demo data only.",
       "hideTopics": true
     },
     "MASTER-TRACKER-FOR-STUDENTS-WITH-SPECIAL-CASES-DEMO-": {
+      "slug": "case-board",
       "title": "Case Board",
-      "description": "Case dashboard for a school office. Status tracking, document checklist, and review dates. React on Google Apps Script and Sheets. Demo data only.",
-      "hideTopics": true
+      "description": "Case dashboard for an office. Status tracking, document checklist and review dates. Demo data only.",
+      "hideTopics": true,
+      "image": "/projects/case-board.jpg",
+      "caseStudy": {
+        "problem": "Each case's status, required documents and review dates lived in separate files, which made missed deadlines easy.",
+        "role": "Sole developer, commissioned work. Built, deployed and maintained it.",
+        "stack": [
+          "React",
+          "Tailwind CSS",
+          "Google Apps Script",
+          "Google Sheets"
+        ],
+        "result": [
+          "Every case's status, document checklist and next review date on one board.",
+          "Shows at a glance which cases are still missing documents.",
+          "No server or hosting cost: runs on Apps Script and Sheets."
+        ]
+      }
     }
   }
 }

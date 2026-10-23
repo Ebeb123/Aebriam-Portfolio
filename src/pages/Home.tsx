@@ -3,6 +3,10 @@ import { Link, useLocation } from 'react-router-dom';
 import { useContent } from '../contexts/ContentContext';
 import Section, { fadeUp } from '../components/minimal/Section';
 import ProjectCarousel from '../components/minimal/ProjectCarousel';
+import GithubActivity from '../components/minimal/GithubActivity';
+
+// Set at build time (vite.config.ts), so it changes every time Vercel deploys a push.
+const LAST_UPDATED = new Date(__BUILD_DATE__).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
 import { useCredlyBadges } from '../components/minimal/useCredlyBadges';
 
 const Home = () => {
@@ -59,10 +63,6 @@ const Home = () => {
           <div style={fadeUp(0).style} className="fade-up hero-photo">
             <div className="frame">
               <img src={profile.photo} alt={profile.name} />
-            </div>
-            <div className="cap" aria-hidden="true">
-              <span>{about.fields.find((f) => f.label === 'Base')?.value.split(',')[0] ?? ''}</span>
-              <span>{about.fields.find((f) => f.label === 'Class')?.value ?? ''}</span>
             </div>
           </div>
 
@@ -139,10 +139,11 @@ const Home = () => {
       {/* ---------- projects ---------- */}
       <Section
         id="projects"
-        title="Selected work"
+        title="Projects"
         action={<Link to="/projects" className="arrow-link">View all <span className="arr">→</span></Link>}
       >
         <ProjectCarousel />
+        <GithubActivity url={contact.github} />
       </Section>
 
       {/* ---------- experience ---------- */}
@@ -229,7 +230,7 @@ const Home = () => {
 
       {/* ---------- contact ---------- */}
       <Section id="contact" title="Contact">
-        <p className="contact-line max-w-[34rem]">{contact.tagline}</p>
+        <p className="contact-line">{contact.tagline}</p>
         <div className="card mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div className="min-w-0">
             <div className="micro">Email</div>
@@ -253,7 +254,9 @@ const Home = () => {
       </Section>
 
       <footer className="mt-24 pt-6 border-t border-[rgb(var(--g200))] flex flex-wrap justify-between gap-2">
-        <span className="micro">© {new Date().getFullYear()} {profile.name}</span>
+        <span className="micro">
+          © {new Date().getFullYear()} {profile.name} · Last updated {LAST_UPDATED}
+        </span>
         <a href="#about" className="micro hover:text-[rgb(var(--ink))]">Back to top ↑</a>
       </footer>
     </div>

@@ -10,7 +10,7 @@ const AllProjects = () => {
       <Link to="/#projects" className="arrow-link">← home</Link>
       <h1 style={fadeUp(0).style} className="fade-up page-title mt-8">projects</h1>
       <p style={fadeUp(1).style} className="fade-up muted mt-4 text-[15px]">
-        Everything I've built — apps, school systems and experiments. Live demos use sample data.
+        Everything I've built — apps, web systems and experiments. Live demos use sample data.
       </p>
       <div style={fadeUp(2).style} className="fade-up mt-10">
         <ProjectList />

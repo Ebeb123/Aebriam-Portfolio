@@ -16,12 +16,21 @@ export type ProjectCardData = {
   tags: string[]; // outline chips
   logo?: string;
   logoCandidates?: string[];
+  image?: string; // screenshot shown at the top of the card
+  imageCandidates?: string[]; // tried in order when `image` isn't set
   detailsTo?: string; // internal case-study page
   repoUrl?: string;
   liveUrl?: string;
   previewSlug?: string; // opens the preview modal
   year?: string;
 };
+
+/** Screenshot files the card looks for inside each repo (put one in the repo's main folder). */
+const REPO_SHOT_PATHS = ['portfolio-screenshot.png', 'portfolio-screenshot.jpg', 'screenshot.png'];
+
+/** Last resort: a free live screenshot of the demo link (microlink.io). */
+const liveShot = (url: string) =>
+  `https://api.microlink.io/?url=${encodeURIComponent(url)}&screenshot=true&meta=false&embed=screenshot.url&viewport.width=1280&viewport.height=800&waitForTimeout=2500`;
 
 const SMALL = new Set(['for', 'with', 'and', 'of', 'the', 'to', 'in', 'a', 'an']);
 
@@ -75,6 +84,7 @@ export const useProjects = () => {
     tags: p.technologies.slice(0, 3),
     year: 'Ongoing',
     logo: resolveImage(p.icon) || undefined,
+    image: p.image || undefined,
     detailsTo: `/projects/${p.slug}`,
     repoUrl: p.githubUrl || undefined,
     liveUrl: p.preview.liveUrl || undefined,
@@ -89,12 +99,22 @@ export const useProjects = () => {
       key: `gh-${r.name}`,
       title: o.title || prettyRepoName(r.name),
       summary: o.description || r.description || 'No description yet.',
-      kind: repoKind(r),
+      kind: o.kind || repoKind(r),
       tags: [...(lang ? [lang] : []), ...(gh.showTopics && !o.hideTopics ? topics.map((t) => t.replace(/-/g, ' ')) : [])].slice(0, 3),
       logoCandidates: r.fullName
         ? REPO_LOGO_PATHS.map((p) => `https://raw.githubusercontent.com/${r.fullName}/${r.defaultBranch || 'main'}/${p}`)
         : [],
       liveUrl: r.homepage ? (r.homepage.startsWith('http') ? r.homepage : `https://${r.homepage}`) : undefined,
+      image: o.image || undefined,
+      // New project with no screenshot set? Use portfolio-screenshot.png from the repo,
+      // or take a live screenshot of its demo link automatically.
+      imageCandidates: o.image
+        ? undefined
+        : [
+            ...(r.fullName ? REPO_SHOT_PATHS.map((p) => `https://raw.githubusercontent.com/${r.fullName}/${r.defaultBranch || 'main'}/${p}`) : []),
+            ...(r.homepage ? [liveShot(r.homepage.startsWith('http') ? r.homepage : `https://${r.homepage}`)] : []),
+          ],
+      detailsTo: o.slug && o.caseStudy ? `/projects/${o.slug}` : undefined,
       year: r.pushedAt ? r.pushedAt.slice(0, 4) : undefined,
     };
   });
