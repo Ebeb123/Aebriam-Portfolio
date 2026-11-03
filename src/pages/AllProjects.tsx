@@ -4,7 +4,9 @@ import ProjectList from '../components/minimal/ProjectList';
 import { fadeUp } from '../components/minimal/Section';
 
 const AllProjects = () => {
-  useEffect(() => window.scrollTo(0, 0), []);
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   return (
     <div className="page page-wide">
       <Link to="/#projects" className="arrow-link">← home</Link>

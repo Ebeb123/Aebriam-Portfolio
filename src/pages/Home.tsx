@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useContent } from '../contexts/ContentContext';
 import Section, { fadeUp } from '../components/minimal/Section';
 import ProjectCarousel from '../components/minimal/ProjectCarousel';
@@ -15,15 +15,19 @@ const Home = () => {
   const certifications = useCredlyBadges(content.certifications); // live from Credly
   const education = content.education ?? [];
   const location = useLocation();
+  const navigate = useNavigate();
   const [copied, setCopied] = useState(false);
 
-  // scroll to /#section when arriving from another page
+  // scroll to /#section when arriving from another page, then drop the hash so the URL is back to "/"
   useEffect(() => {
     if (!location.hash) return;
     const id = location.hash.slice(1);
-    const t = setTimeout(() => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' }), 80);
+    const t = setTimeout(() => {
+      document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+      navigate({ hash: '' }, { replace: true, preventScrollReset: true });
+    }, 80);
     return () => clearTimeout(t);
-  }, [location.hash]);
+  }, [location.hash, location.key, navigate]);
 
   const copyEmail = async () => {
     try {

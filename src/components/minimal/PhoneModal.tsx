@@ -37,7 +37,10 @@ const PhoneModal = ({ url, title, onClose }: { url: string | null; title: string
         <div className="phone-scale" style={{ width: 410 * scale, height: 860 * scale }}>
           <div className="phone" style={{ transform: `scale(${scale})` }}>
             <div className="phone-notch" aria-hidden="true" />
-            <iframe src={url} title={`${title} demo`} className="phone-screen" loading="lazy" />
+            {/* the app starts below the island, like a real status bar */}
+            <div className="phone-display">
+              <iframe src={url} title={`${title} demo`} className="phone-screen" loading="lazy" />
+            </div>
           </div>
         </div>
       </div>

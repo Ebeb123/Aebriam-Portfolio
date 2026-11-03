@@ -52,7 +52,9 @@ const ProjectPage = () => {
   const [showPreview, setShowPreview] = useState(false);
   const [phoneOpen, setPhoneOpen] = useState(false);
 
-  useEffect(() => window.scrollTo(0, 0), [slug]);
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [slug]);
 
   const project = content.projects.find((p) => p.slug === slug);
 
