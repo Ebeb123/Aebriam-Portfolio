@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { DEMO_SANDBOX } from './PreviewModal';
 
 /** Shows a mobile app's web demo inside a phone-shaped frame. */
 const PhoneModal = ({ url, title, onClose }: { url: string | null; title: string; onClose: () => void }) => {
@@ -39,7 +40,7 @@ const PhoneModal = ({ url, title, onClose }: { url: string | null; title: string
             <div className="phone-notch" aria-hidden="true" />
             {/* the app starts below the island, like a real status bar */}
             <div className="phone-display">
-              <iframe src={url} title={`${title} demo`} className="phone-screen" loading="lazy" />
+              <iframe src={url} title={`${title} demo`} className="phone-screen" loading="lazy" sandbox={DEMO_SANDBOX} referrerPolicy="strict-origin-when-cross-origin" />
             </div>
           </div>
         </div>

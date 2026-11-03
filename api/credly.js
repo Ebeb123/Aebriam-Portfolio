@@ -8,6 +8,10 @@
 const USER = process.env.CREDLY_USER || 'aebriam-lawas';
 
 export default async function handler(req, res) {
+  if (req.method !== 'GET' && req.method !== 'HEAD') {
+    res.setHeader('Allow', 'GET, HEAD');
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
   try {
     const badges = [];
     for (let page = 1; page <= 5; page++) {
@@ -41,6 +45,7 @@ export default async function handler(req, res) {
     res.status(200).json({ badges });
   } catch (err) {
     res.setHeader('Cache-Control', 's-maxage=300');
-    res.status(502).json({ error: String((err && err.message) || err) });
+    console.error(err); // details stay in the Vercel logs, not in the public response
+    res.status(502).json({ error: 'Upstream unavailable' });
   }
 }

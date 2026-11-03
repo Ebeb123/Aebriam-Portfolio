@@ -340,3 +340,6 @@ scripts/.cache/
 # GitHub files
 .github/
 .gitlab/
+
+# Scratch files from Claude sessions (not part of the site)
+Claude outputs/

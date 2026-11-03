@@ -32,6 +32,17 @@ const REPO_SHOT_PATHS = ['portfolio-screenshot.png', 'portfolio-screenshot.jpg',
 const liveShot = (url: string) =>
   `https://api.microlink.io/?url=${encodeURIComponent(url)}&screenshot=true&meta=false&embed=screenshot.url&viewport.width=1280&viewport.height=800&waitForTimeout=2500`;
 
+/** Repo "website" field → a safe link, or undefined. Only http(s) is allowed, so a "javascript:" value can't run. */
+const httpUrl = (raw: string) => {
+  if (!raw) return undefined;
+  try {
+    const u = new URL(/^[a-z][a-z\d+.-]*:/i.test(raw) ? raw : `https://${raw}`);
+    return u.protocol === 'https:' || u.protocol === 'http:' ? u.href : undefined;
+  } catch {
+    return undefined;
+  }
+};
+
 const SMALL = new Set(['for', 'with', 'and', 'of', 'the', 'to', 'in', 'a', 'an']);
 
 /** "MASTER-TRACKER-FOR-STUDENTS-DEMO-" → "Master Tracker for Students" */
@@ -95,6 +106,7 @@ export const useProjects = () => {
     const o = gh.overrides?.[r.name] ?? {};
     const topics = r.topics.filter((t) => !['mobile-app', 'react-native', 'school-project'].includes(t.toLowerCase()));
     const lang = r.languages[0]?.name;
+    const live = httpUrl(r.homepage);
     return {
       key: `gh-${r.name}`,
       title: o.title || prettyRepoName(r.name),
@@ -104,7 +116,7 @@ export const useProjects = () => {
       logoCandidates: r.fullName
         ? REPO_LOGO_PATHS.map((p) => `https://raw.githubusercontent.com/${r.fullName}/${r.defaultBranch || 'main'}/${p}`)
         : [],
-      liveUrl: r.homepage ? (r.homepage.startsWith('http') ? r.homepage : `https://${r.homepage}`) : undefined,
+      liveUrl: live,
       image: o.image || undefined,
       // New project with no screenshot set? Use portfolio-screenshot.png from the repo,
       // or take a live screenshot of its demo link automatically.
@@ -112,7 +124,7 @@ export const useProjects = () => {
         ? undefined
         : [
             ...(r.fullName ? REPO_SHOT_PATHS.map((p) => `https://raw.githubusercontent.com/${r.fullName}/${r.defaultBranch || 'main'}/${p}`) : []),
-            ...(r.homepage ? [liveShot(r.homepage.startsWith('http') ? r.homepage : `https://${r.homepage}`)] : []),
+            ...(live ? [liveShot(live)] : []),
           ],
       detailsTo: o.slug && o.caseStudy ? `/projects/${o.slug}` : undefined,
       year: r.pushedAt ? r.pushedAt.slice(0, 4) : undefined,

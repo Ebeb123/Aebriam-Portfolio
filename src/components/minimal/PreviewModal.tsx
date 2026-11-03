@@ -15,7 +15,13 @@ const toYouTubeEmbed = (url: string) => {
   return m ? `https://www.youtube.com/embed/${m[1]}` : null;
 };
 
-export const hasPreview = (p?: Partial<ProjectPreviewData>) => !!(p && (p.liveUrl || p.video || (p.images && p.images.length)));
+/**
+ * Embedded demos run their own scripts, but without "allow-top-navigation" they
+ * can't redirect this tab (e.g. if a demo site is ever hijacked).
+ */
+export const DEMO_SANDBOX = 'allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-downloads allow-modals';
+
+export const hasPreview =(p?: Partial<ProjectPreviewData>) => !!(p && (p.liveUrl || p.video || (p.images && p.images.length)));
 
 const PreviewModal = ({ open, onClose, title, preview }: Props) => {
   const tabs = useMemo(() => {
@@ -75,7 +81,7 @@ const PreviewModal = ({ open, onClose, title, preview }: Props) => {
         <div className="rounded-[12px] border border-[rgb(var(--g200))] overflow-hidden bg-[rgb(var(--g50))]">
           {!tab && <p className="micro p-10 text-center">no preview yet</p>}
           {tab === 'live' && preview?.liveUrl && (
-            <iframe src={preview.liveUrl} title={`${title} live`} className="w-full h-[65vh] bg-white" loading="lazy" />
+            <iframe src={preview.liveUrl} title={`${title} live`} className="w-full h-[65vh] bg-white" loading="lazy" sandbox={DEMO_SANDBOX} referrerPolicy="strict-origin-when-cross-origin" />
           )}
           {tab === 'video' && preview?.video &&
             (yt ? (
