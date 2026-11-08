@@ -15,7 +15,7 @@ export const siteContent: SiteContent = {
     shortName: 'Aebriam',
     navName: 'Aebriam Lawas',
     handle: 'aebriam.lawas',
-    roles: ['BS Information Technology Student', 'Robotics Working Scholar', 'Mobile App Developer', 'Web Developer', 'Cybersecurity Enthusiast'],
+    roles: ['BS Information Technology Student', 'UCLM Working Scholar', 'Mobile App Developer', 'Web Developer', 'Cybersecurity Enthusiast'],
     photo: profile1,
     resumeUrl: '/previews/resume.pdf',
     // Line under your name on the link preview (Messenger / Facebook / LinkedIn) and in Google.
@@ -39,7 +39,7 @@ export const siteContent: SiteContent = {
     ],
     cmdHighlights: 'ls highlights/',
     highlights: [
-      'robotics working scholar 2024 – 2026 · managing 87 robotics kits',
+      'UCLM working scholar 2024 – 2026 · Assigned at Robotics laboratory',
       'shipped 2 Android apps in 2026: Budgee & ShuttleFlow',
       '{certCount} certifications from {certIssuers}', // filled in live from Credly
       'capstone: IntervAI — AI mock interview system',
@@ -91,14 +91,14 @@ export const siteContent: SiteContent = {
       period: '2024 - 2026',
       description: [
         'Assist in facilitating robotics instruction and hands-on laboratory activities for senior high school students.',
-        'Manage the setup, testing, and troubleshooting of 87 robotics kits (29 Arduino, 29 Raspberry Pi, and 29 LEGO EV3) for student projects.',
+        'Manage the setup, testing, and troubleshooting of 87 robotics kits (29 Arduino, 29 Raspberry Pi, and 29 LEGO EV3) for student activities.',
       ],
     },
     {
       title: 'Project Manager — IntervAI',
       company: 'Team project · UCLM capstone',
       location: 'Mandaue City, Cebu',
-      period: 'Ongoing',
+      period: '2026 - 2027',
       description: [
         'Lead a four-member team building an AI mock-interview system that scores voice, facial expression and answer content.',
         'Plan tasks and deadlines, coordinate the system and manuscript work, and handle panel revisions.',

@@ -1,17 +1,23 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useLocation } from 'react-router-dom';
 import { useContent } from '../../contexts/ContentContext';
+import { swarmBus } from './swarmBus';
 
 /**aebriam only
  * Guided tour: a fake cursor with a chat bubble glides to the important parts
  * of the page and "types" a short message at each stop.
- * Runs once on the first visit; afterwards a "take the tour again" pill replays it.
+ * Runs once on the first visit (after the swarm build has drawn the first screen);
+ * afterwards a "take the tour again" pill replays it. Each stop waits until the swarm
+ * has built that part of the page.
  */
 type Anchor = 'tl' | 'center' | 'left';
 type Step = { target: string; text: string; anchor?: Anchor; click?: boolean; hops?: string[]; hopsMs?: number };
 
 const SEEN_KEY = 'tour-seen-v2';
 const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
+/** waits for the swarm to build `el`, but never longer than 6 s (e.g. the visitor scrolled away) */
+const built = (el: Element) => Promise.race([swarmBus.whenBuilt(el), wait(6000)]);
 
 /** Resolves once the page has stopped scrolling (smooth scroll has no "done" event everywhere). */
 const scrollSettled = async () => {
@@ -73,6 +79,8 @@ const Tour = () => {
   const [typed, setTyped] = useState('');
   const [flip, setFlip] = useState(false);
   const [clicking, setClicking] = useState(false);
+  // the swarm is still drawing the first screen: keep the pill row to just "Skip animation"
+  const [swarmWaiting, setSwarmWaiting] = useState(() => swarmBus.running && !swarmBus.ready);
 
   const finish = useCallback(() => {
     cancelled.current = true;
@@ -123,6 +131,7 @@ const Tour = () => {
         el.scrollIntoView({ behavior: 'smooth', block: 'center' });
         await scrollSettled();
       }
+      await built(el);
       if (cancelled.current) return;
 
       currentRef.current = { el, anchor: s.anchor };
@@ -148,6 +157,8 @@ const Tour = () => {
           if (cancelled.current) break;
           const h = document.querySelector<HTMLElement>(sel);
           if (!h) continue;
+          await built(h);
+          if (cancelled.current) break;
           currentRef.current = { el: h, anchor: s.anchor };
           const pt = pointFor(h, s.anchor);
           place(pt.x, pt.y);
@@ -179,9 +190,39 @@ const Tour = () => {
       /* ignore */
     }
     if (seen || reduce) return;
-    const t = setTimeout(run, 1200);
+    let t: ReturnType<typeof setTimeout> | undefined;
+    // the swarm build goes first; the tour starts once the first screen is drawn
+    if (swarmBus.running && !swarmBus.ready) {
+      const onReady = () => (t = setTimeout(run, 500));
+      window.addEventListener('swarm:ready', onReady, { once: true });
+      return () => {
+        window.removeEventListener('swarm:ready', onReady);
+        clearTimeout(t);
+      };
+    }
+    t = setTimeout(run, 1200);
     return () => clearTimeout(t);
   }, [pathname, run]);
+
+  useEffect(() => {
+    const on = () => setSwarmWaiting(true);
+    const off = () => setSwarmWaiting(false);
+    // the swarm may have started before this listener existed (it starts in a layout effect)
+    if (swarmBus.running && !swarmBus.ready) on();
+    window.addEventListener('swarm:start', on);
+    window.addEventListener('swarm:ready', off);
+    window.addEventListener('swarm:end', off);
+    return () => {
+      window.removeEventListener('swarm:start', on);
+      window.removeEventListener('swarm:ready', off);
+      window.removeEventListener('swarm:end', off);
+    };
+  }, []);
+
+  // lets the swarm hide its "Replay build" pill while the tour is running
+  useEffect(() => {
+    window.dispatchEvent(new CustomEvent('tour:state', { detail: { running } }));
+  }, [running]);
 
   // the moment the visitor scrolls by themselves, the tour stops scrolling for them
   useEffect(() => {
@@ -231,6 +272,8 @@ const Tour = () => {
 
   return (
     <>
+      {createPortal(
+        <>
       <div ref={pointerRef} className={`tour-pointer${running ? ' on' : ''}${clicking ? ' click' : ''}`} aria-hidden="true">
         <svg className="tour-cursor" width="20" height="22" viewBox="0 0 20 22">
           <path d="M2 1.5 L2 18 L6.6 13.9 L9.6 20.4 L12.6 19 L9.7 12.7 L16 12.4 Z" />
@@ -248,10 +291,13 @@ const Tour = () => {
 
       {/* screen-reader version of the bubble */}
       <div className="sr-only" role="status" aria-live="polite">{running ? typed : ''}</div>
+        </>,
+        document.body,
+      )}
 
       {running ? (
         <button type="button" className="tour-pill" onClick={finish}>Skip tour</button>
-      ) : (
+      ) : swarmWaiting ? null : (
         <button type="button" className="tour-pill" onClick={run}>Take the tour again</button>
       )}
     </>

@@ -290,13 +290,44 @@ a.badge:focus-visible { outline: 2px solid rgb(var(--accent)); outline-offset: 4
 .tour-msg { font-size: 14px; font-weight: 500; line-height: 1.4; }
 .tour-caret { display: inline-block; width: 1.5px; height: 0.95em; margin-left: 2px; vertical-align: -2px; background: currentColor; animation: caret 0.9s steps(1) infinite; }
 @keyframes caret { 50% { opacity: 0; } }
+.pill-dock { position: fixed; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); left: 50%; translate: -50% 0; z-index: 9998; display: flex; gap: 0.5rem; }
 .tour-pill {
-  position: fixed; bottom: 16px; left: 50%; translate: -50% 0; z-index: 9998;
+  white-space: nowrap;
   background: rgb(var(--surface)); color: rgb(var(--g500)); border: 1px solid rgb(var(--g200)); border-radius: 4px;
   padding: 0.35rem 0.8rem; font-family: var(--font-mono); font-size: 12px; cursor: pointer;
 }
 .tour-pill:hover { color: rgb(var(--ink)); border-color: rgb(var(--g400)); }
-@media (min-width: 1024px) { .tour-pill { left: calc(50% + 7.5rem); } }
+@media (min-width: 1024px) { .pill-dock { left: calc(50% + 7.5rem); } }
+
+/* ---------- swarm build (SwarmBuild.tsx) ---------- */
+[data-sw-pend] { visibility: hidden !important; }
+.swarm-on .fade-up { opacity: 1; animation: none; }
+.swarm-on .reveal { opacity: 1; transform: none; transition: none; }
+.swarm-on .hero-name .w > span { transform: none; animation: none; }
+.sw-layer { position: absolute; top: 0; left: 0; width: 0; height: 0; z-index: 9990; pointer-events: none; }
+.sw-cur { position: absolute; top: 0; left: 0; will-change: transform; transition: opacity 0.3s; }
+.sw-cur svg { position: absolute; display: none; overflow: visible; filter: drop-shadow(0 1px 1.5px rgb(0 0 0 / 0.22)); transition: scale 0.12s; transform-origin: 0 0; }
+.sw-cur[data-tool="arrow"] .g-arrow, .sw-cur[data-tool="cross"] .g-cross, .sw-cur[data-tool="ibeam"] .g-ibeam, .sw-cur[data-tool="pen"] .g-pen { display: block; }
+.g-arrow { left: -2px; top: -1.5px; }
+.g-cross { left: -8px; top: -8px; }
+.g-ibeam { left: -4.5px; top: -9px; }
+.g-pen { left: -1px; top: -1px; }
+.sw-cur.down svg { scale: 0.85; }
+.sw-cur path { fill: rgb(var(--ink)); stroke: rgb(var(--bg)); stroke-width: 1.4; stroke-linejoin: round; stroke-linecap: round; }
+.sw-cur circle { fill: rgb(var(--bg)); }
+.sw-cur path.halo { fill: none; stroke: rgb(var(--bg)); stroke-width: 3.4; }
+.sw-cur path.line { fill: none; stroke: rgb(var(--ink)); stroke-width: 1.5; }
+.sw-tag { position: absolute; left: 13px; top: 17px; white-space: nowrap; font: 500 10.5px/1 var(--font-mono); padding: 3px 5px 4px; border-radius: 3px; background: rgb(var(--surface)); color: rgb(var(--g600)); border: 1px solid rgb(var(--g300)); }
+.sw-box { position: absolute; border: 1px solid rgb(var(--accent)); background: rgb(var(--accent) / 0.05); transition: opacity 0.3s; }
+.sw-box.ghost { background: none; }
+.sw-box i { position: absolute; width: 6px; height: 6px; background: rgb(var(--surface)); border: 1px solid rgb(var(--accent)); }
+.sw-box i:nth-child(1) { left: -3.5px; top: -3.5px; }
+.sw-box i:nth-child(2) { right: -3.5px; top: -3.5px; }
+.sw-box i:nth-child(3) { left: -3.5px; bottom: -3.5px; }
+.sw-box i:nth-child(4) { right: -3.5px; bottom: -3.5px; }
+.sw-badge { position: absolute; top: calc(100% + 6px); left: 50%; translate: -50% 0; white-space: nowrap; font: 500 10.5px/1 var(--font-mono); padding: 3px 5px; border-radius: 3px; background: rgb(var(--accent)); color: rgb(var(--bg)); font-variant-numeric: tabular-nums; }
+.sw-guide { position: absolute; top: 0; width: 1px; background: rgb(var(--accent) / 0.55); transition: opacity 0.5s; }
+.sw-mark { position: absolute; translate: -50% -50%; font: 500 12px/1 var(--font-mono); color: rgb(var(--g500)); padding: 6px 8px; border: 1px dashed rgb(var(--g300)); border-radius: 4px; background: rgb(var(--surface)); transition: opacity 0.4s; }
 .list { border-top: 1px solid rgb(var(--g200)); }
 .sec-head + .list { border-top: 0; margin-top: -0.75rem; }
 
@@ -317,7 +348,7 @@ a.badge:focus-visible { outline: 2px solid rgb(var(--accent)); outline-offset: 4
 .phone-display { width: 100%; height: 100%; border-radius: 44px; overflow: hidden; background: #f2f2f7; padding: 46px 0 14px; }
 .dark .phone-display { background: #1c1c1e; } /* the demo inherits this page's color scheme */
 .phone-screen { display: block; width: 100%; height: 100%; border: 0; background: #fff; }
-body:has(.modal-backdrop) .tour-pill { display: none; }
+body:has(.modal-backdrop) .pill-dock { display: none; }
 
 /* ---------- case study pages ---------- */
 .cs-shot { margin: 2.5rem 0 0; border: 1px solid rgb(var(--g200)); border-radius: 10px; overflow: hidden; background: rgb(var(--g100)); box-shadow: var(--shadow-lift); }

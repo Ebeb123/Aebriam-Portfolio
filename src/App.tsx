@@ -5,6 +5,7 @@ import { DarkModeProvider } from './contexts/DarkModeContext'
 import Sidebar from './components/minimal/Sidebar'
 import Home from './pages/Home'
 import Tour from './components/minimal/Tour'
+import SwarmBuild from './components/minimal/SwarmBuild'
 
 const ProjectPage = lazy(() => import('./pages/projects/ProjectPage'))
 const AllProjects = lazy(() => import('./pages/AllProjects'))
@@ -27,7 +28,11 @@ function App() {
             </Routes>
           </Suspense>
         </main>
-        <Tour />
+        {/* bottom pills: "Skip animation" / "Replay build" and the tour's own pill */}
+        <div className="pill-dock">
+          <SwarmBuild />
+          <Tour />
+        </div>
       </ContentProvider>
     </DarkModeProvider>
   )
