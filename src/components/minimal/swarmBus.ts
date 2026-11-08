@@ -10,6 +10,8 @@ let waiters: Waiter[] = [];
 export const swarmBus = {
   running: false,
   ready: false,
+  /** the visitor scrolled during the build: the tour then starts without scrolling the page for them */
+  userScrolled: false,
   /** set by the swarm: is this element (or anything inside / around it) still unbuilt? */
   isPending: (() => false) as (el: Element) => boolean,
 

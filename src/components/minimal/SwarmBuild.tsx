@@ -5,8 +5,8 @@ import { swarmBus } from './swarmBus';
 /**
  * Swarm build (home page only): on the first visit the page starts blank and a
  * swarm of cursors draws it back — boxes with a crosshair, text with an I-beam,
- * lines with a pen. The first screen is built right away; every section further
- * down is built when it scrolls into view. Then the guided tour arrow takes over.
+ * lines with a pen. When a screen is done the swarm scrolls on by itself until the
+ * whole page is built, then the cursors scatter and the guided tour arrow takes over.
  *
  * It never edits React's DOM: pieces are hidden with a data attribute and revealed
  * with clip-path, and all cursors / outlines live in their own layer on <body>.
@@ -104,7 +104,8 @@ const pageRect = (el: Element) => {
 };
 const inView = (el: Element) => {
   const r = el.getBoundingClientRect();
-  return r.top < window.innerHeight * 0.9 && r.bottom > 0;
+  // whole viewport, so the last bits of the page still count as on screen at maximum scroll
+  return r.top < window.innerHeight - 8 && r.bottom > 0;
 };
 /** not drawn at this width, or a carousel card that is fully faded out */
 const isGhost = (el: HTMLElement) => {
@@ -158,6 +159,26 @@ function createSwarm(onMode: (building: boolean) => void) {
   let layer: HTMLDivElement | null = null;
   let scanTimer = 0;
   let readyFired = false;
+  // the visitor scrolled by themselves: never scroll for them again during this build
+  let userTook = false;
+  const takeOver = () => {
+    userTook = true;
+    swarmBus.userScrolled = true;
+  };
+  const onKey = (e: KeyboardEvent) => {
+    if (['ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', 'Home', 'End', ' '].includes(e.key)) takeOver();
+  };
+  const listen = (on: boolean) => {
+    if (on) {
+      window.addEventListener('wheel', takeOver, { passive: true });
+      window.addEventListener('touchmove', takeOver, { passive: true });
+      window.addEventListener('keydown', onKey);
+    } else {
+      window.removeEventListener('wheel', takeOver);
+      window.removeEventListener('touchmove', takeOver);
+      window.removeEventListener('keydown', onKey);
+    }
+  };
 
   const alive = (my: number) => {
     if (my !== token) throw ABORT;
@@ -253,7 +274,24 @@ function createSwarm(onMode: (building: boolean) => void) {
       }
     }
   };
-  const next = () => tasks.find((t) => t.state === 0 && (!t.parent || t.parent.state === 2) && inView(t.el));
+  const open = (t: Task) => t.state === 0 && (!t.parent || t.parent.state === 2);
+  /** what's on screen first; once the visitor scrolls on their own, the rest too (closest to the screen first) */
+  const next = () => {
+    const onScreen = tasks.find((t) => open(t) && inView(t.el));
+    if (onScreen || !userTook) return onScreen;
+    let best: Task | undefined;
+    let bestGap = Infinity;
+    for (const t of tasks) {
+      if (!open(t)) continue;
+      const r = t.el.getBoundingClientRect();
+      const gap = r.top > window.innerHeight ? r.top - window.innerHeight : -r.bottom;
+      if (gap < bestGap) {
+        bestGap = gap;
+        best = t;
+      }
+    }
+    return best;
+  };
   swarmBus.isPending = (el) => tasks.some((t) => t.state !== 2 && (t.el === el || el.contains(t.el) || t.el.contains(el)));
 
   const doBox = async (c: Cur, t: Task, my: number) => {
@@ -403,6 +441,7 @@ function createSwarm(onMode: (building: boolean) => void) {
 
   const finishAll = (notifyUi: boolean) => {
     window.clearInterval(scanTimer);
+    listen(false);
     layer?.remove();
     layer = null;
     tasks.forEach(settle);
@@ -417,8 +456,11 @@ function createSwarm(onMode: (building: boolean) => void) {
     finishAll(false);
     tasks = [];
     readyFired = false;
+    userTook = false;
+    swarmBus.userScrolled = false;
     swarmBus.ready = false;
     swarmBus.running = true;
+    listen(true);
     document.documentElement.classList.add('swarm-on'); // turns off the page's own fade-ins while the swarm owns the reveal
     window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
     scanDom();
@@ -476,29 +518,37 @@ function createSwarm(onMode: (building: boolean) => void) {
         }, my);
         press(lead, false);
       };
-      // first screen done -> the tour may start; the guide fades
-      const watchReady = async () => {
+      // the swarm doesn't wait for the visitor: once the screen is built it scrolls on to the next unbuilt part,
+      // until the visitor scrolls by themselves; after that it keeps building wherever they are (and off-screen)
+      const autoScroll = async () => {
         await sleep(300, my);
-        while (!readyFired) {
-          if (!tasks.some((t) => t.state === 1 || (t.state === 0 && inView(t.el)))) {
-            fireReady();
+        while (tasks.some((t) => t.state !== 2)) {
+          if (userTook) {
             if (guide) guide.style.opacity = '0';
+          } else if (!tasks.some((t) => t.state === 1 || (t.state === 0 && inView(t.el)))) {
+            if (guide) guide.style.opacity = '0';
+            const target = tasks.find((t) => t.state === 0);
+            if (target) {
+              window.scrollTo({ top: pageRect(target.el).y - window.innerHeight * 0.15, behavior: 'smooth' });
+              await sleep(700, my);
+            }
           }
-          await sleep(150, my);
+          await sleep(120, my);
         }
       };
       await Promise.all([
         ...crew.map(({ c }, i) => (i === 0 ? dragGuide().then(() => worker(c, my)) : worker(c, my))),
-        watchReady(),
+        autoScroll(),
       ]);
 
-      // 3. everything built: the swarm scatters off-screen
+      // 3. everything built: the swarm scatters off-screen, then the tour arrow ("me") takes over
       await Promise.all(crew.map(({ c }) => {
         const a = Math.random() * Math.PI * 2;
         c.el.style.opacity = '0';
         return moveTo(c, c.x + Math.cos(a) * 400, c.y + Math.sin(a) * 300, my, 450);
       }));
       finishAll(true);
+      fireReady();
     } catch (e) {
       if (e !== ABORT) throw e;
     }

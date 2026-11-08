@@ -7,7 +7,7 @@ import { swarmBus } from './swarmBus';
 /**aebriam only
  * Guided tour: a fake cursor with a chat bubble glides to the important parts
  * of the page and "types" a short message at each stop.
- * Runs once on the first visit (after the swarm build has drawn the first screen);
+ * Runs once on the first visit (after the swarm build has drawn the whole page);
  * afterwards a "take the tour again" pill replays it. Each stop waits until the swarm
  * has built that part of the page.
  */
@@ -106,13 +106,17 @@ const Tour = () => {
     const pointer = pointerRef.current;
     if (!pointer) return;
     cancelled.current = false;
-    userScrolled.current = false;
+    // the visitor already scrolled on their own during the swarm build: don't steer the page for them
+    userScrolled.current = swarmBus.userScrolled;
+    swarmBus.userScrolled = false;
     setTyped('');
     setRunning(true);
     // show every scroll-revealed section now so measurements are final
     document.querySelectorAll('.reveal').forEach((el) => el.classList.add('in'));
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    await scrollSettled();
+    if (!userScrolled.current) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      await scrollSettled();
+    }
     // enter from the bottom-right corner of the screen
     pointer.style.transition = 'none';
     place(document.documentElement.clientWidth - 60, window.scrollY + window.innerHeight - 70);
@@ -120,7 +124,23 @@ const Tour = () => {
     pointer.style.transition = '';
     await wait(150);
 
-    for (const s of steps) {
+    // visitor scrolled on their own: start at the stop closest to what they're looking at
+    let first = 0;
+    if (userScrolled.current) {
+      let best = Infinity;
+      steps.forEach((s, i) => {
+        const el = document.querySelector<HTMLElement>(s.target);
+        if (!el) return;
+        const b = el.getBoundingClientRect();
+        const gap = Math.abs(b.top + b.height / 2 - window.innerHeight / 2);
+        if (gap < best) {
+          best = gap;
+          first = i;
+        }
+      });
+    }
+
+    for (const s of steps.slice(first)) {
       if (cancelled.current) return;
       const el = document.querySelector<HTMLElement>(s.target);
       if (!el) continue;
