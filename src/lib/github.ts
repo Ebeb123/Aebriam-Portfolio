@@ -3,6 +3,7 @@
 import type { CaseStudy, GithubRepoInfo } from '../content/types';
 import config from '../content/github.config.json';
 import snapshot from '../content/github-snapshot.json';
+import shots from '../content/project-shots.json';
 
 export type RepoOverride = {
   title?: string;
@@ -15,6 +16,12 @@ export type RepoOverride = {
   /** URL name of the case-study page: /projects/<slug> */
   slug?: string;
   caseStudy?: CaseStudy;
+  /** false = keep "image" as is; don't replace it with the auto screenshot (scripts/snap-projects.mjs) */
+  autoShot?: boolean;
+  /** Page the auto screenshot opens instead of the repo's Website link */
+  shotUrl?: string;
+  /** Background color behind the phone frame in mobile-app screenshots */
+  shotBg?: string;
 };
 
 export type GithubConfig = {
@@ -30,6 +37,13 @@ export type GithubConfig = {
 export const githubConfig = config as GithubConfig;
 /** Saved at build time (scripts/fetch-github.mjs) so cards show instantly and when GitHub is unreachable. */
 export const githubSnapshot = snapshot as GithubRepoInfo[];
+
+/** Card screenshot for a repo: the auto screenshot retaken after each commit, else the override image. */
+export const repoImage = (repoName: string): string | undefined => {
+  const o = githubConfig.overrides?.[repoName] ?? {};
+  const auto = o.autoShot === false ? undefined : (shots as Record<string, { image: string }>)[repoName]?.image;
+  return auto || o.image || undefined;
+};
 
 const API = 'https://api.github.com';
 const TTL_MS = 10 * 60 * 1000; // browsers re-check GitHub at most every 10 minutes

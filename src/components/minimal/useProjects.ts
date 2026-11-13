@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useContent } from '../../contexts/ContentContext';
-import { fetchPortfolioRepos, githubConfig, githubSnapshot, sortRepos } from '../../lib/github';
+import { fetchPortfolioRepos, githubConfig, githubSnapshot, repoImage, sortRepos } from '../../lib/github';
 import { resolveImage } from '../../content/icons';
 import type { GithubRepoInfo } from '../../content/types';
 import { hasPreview } from './PreviewModal';
@@ -107,6 +107,7 @@ export const useProjects = () => {
     const topics = r.topics.filter((t) => !['mobile-app', 'react-native', 'school-project'].includes(t.toLowerCase()));
     const lang = r.languages[0]?.name;
     const live = httpUrl(r.homepage);
+    const image = repoImage(r.name);
     return {
       key: `gh-${r.name}`,
       title: o.title || prettyRepoName(r.name),
@@ -117,10 +118,10 @@ export const useProjects = () => {
         ? REPO_LOGO_PATHS.map((p) => `https://raw.githubusercontent.com/${r.fullName}/${r.defaultBranch || 'main'}/${p}`)
         : [],
       liveUrl: live,
-      image: o.image || undefined,
+      image,
       // New project with no screenshot set? Use portfolio-screenshot.png from the repo,
       // or take a live screenshot of its demo link automatically.
-      imageCandidates: o.image
+      imageCandidates: image
         ? undefined
         : [
             ...(r.fullName ? REPO_SHOT_PATHS.map((p) => `https://raw.githubusercontent.com/${r.fullName}/${r.defaultBranch || 'main'}/${p}`) : []),

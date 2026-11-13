@@ -30,7 +30,8 @@
           "Splits every peso into Needs, Wants and Savings (50/30/20) automatically.",
           "Also runs in the browser, so anyone can try it without installing."
         ]
-      }
+      },
+      "shotBg": "#e5ecdd"
     },
     "ShuttleFlow": {
       "kind": "Mobile app",
@@ -51,7 +52,8 @@
           "Live courts, the waiting queue and win/loss stats on one screen.",
           "Runs offline on a single phone held by the organizer."
         ]
-      }
+      },
+      "shotBg": "#ebf4cf"
     },
     "Devices-Booking-System-DEMO": {
       "slug": "device-reservation",

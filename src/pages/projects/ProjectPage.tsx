@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useContent } from '../../contexts/ContentContext';
 import { resolveImage } from '../../content/icons';
-import { githubConfig } from '../../lib/github';
+import { githubConfig, repoImage } from '../../lib/github';
 import type { CaseStudy } from '../../content/types';
 import Section, { fadeUp } from '../../components/minimal/Section';
 import PreviewModal, { hasPreview } from '../../components/minimal/PreviewModal';
@@ -92,9 +92,9 @@ const ProjectPage = () => {
           )}
         </header>
 
-        {o.image && (
+        {repoImage(repoName) && (
           <figure style={fadeUp(4).style} className="fade-up cs-shot">
-            <img src={o.image} alt={`${title} screenshot`} />
+            <img src={repoImage(repoName)} alt={`${title} screenshot`} />
           </figure>
         )}
 

@@ -2,7 +2,14 @@
 
 ## What updates by itself (no push needed)
 - **Projects**: any public repo with the `portfolio` topic (title, description, demo link). Shows within about 10 minutes.
-- **Project screenshot** for a new repo: the card uses `portfolio-screenshot.png` from the repo's main folder if it exists; otherwise it takes a live screenshot of the repo's **Website** link automatically.
+- **Project screenshots**: every hour a GitHub Action checks your `portfolio` repos. When one has a new commit
+  (at least 10 minutes old, so its demo has finished deploying), it screenshots the repo's **Website** link,
+  saves `public/projects/<slug>.jpg` and pushes it here, and Vercel redeploys. Mobile apps get the phone frame.
+  - Retake now: GitHub → **Actions** → *Refresh project screenshots* → **Run workflow** (tick *force* to redo all).
+  - Or locally: `npm run shots` (changed only), `npm run shots -- --force`, `npm run shots -- --only Budgee`.
+  - Since the Action pushes commits, run `git pull` before you push your own changes.
+  - Per-repo options in the override: `"autoShot": false` keeps your own `image`; `"shotUrl"` screenshots a different
+    page than the Website link; `"shotBg"` sets the color behind the phone.
 - **Certifications**: every public badge on Credly (credly.com/users/aebriam-lawas). Shows within about 1 hour.
 - **GitHub line**: "21 public repos · last commit 2 days ago".
 

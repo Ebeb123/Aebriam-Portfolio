@@ -1,0 +1,55 @@
+# Every hour: if a portfolio project repo got a new commit, retake its card screenshot
+# (scripts/snap-projects.mjs) and push it here, so Vercel redeploys with the new image.
+name: Refresh project screenshots
+
+on:
+  schedule:
+    - cron: '23 * * * *'
+  workflow_dispatch:
+    inputs:
+      force:
+        description: 'Retake every screenshot'
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: project-shots
+  cancel-in-progress: false
+
+jobs:
+  shots:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Any project changed?
+        id: check
+        run: node scripts/snap-projects.mjs --check ${{ inputs.force && '--force' || '' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Take screenshots
+        if: steps.check.outputs.changed == 'true'
+        run: |
+          npm ci --ignore-scripts
+          npx playwright install --with-deps chromium-headless-shell
+          node scripts/snap-projects.mjs ${{ inputs.force && '--force' || '' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Commit and push
+        if: steps.check.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/projects src/content/project-shots.json
+          git diff --cached --quiet && exit 0
+          git commit -m "chore: refresh project screenshots"
+          git pull --rebase
+          git push

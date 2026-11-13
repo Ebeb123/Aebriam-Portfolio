@@ -338,7 +338,8 @@ scripts/*.log
 scripts/tmp/
 scripts/.cache/
 # GitHub files
-.github/
+.github/*
+!.github/workflows/
 .gitlab/
 
 # Scratch files from Claude sessions (not part of the site)
